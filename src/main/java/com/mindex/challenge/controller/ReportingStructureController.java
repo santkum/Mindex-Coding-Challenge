@@ -1,5 +1,6 @@
 package com.mindex.challenge.controller;
 
+import com.mindex.challenge.Exceptions.NoSuchEmployeeException;
 import com.mindex.challenge.service.ReportingStructureService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public class ReportingStructureController {
     private ReportingStructureService reportingStructureService;
 
     @GetMapping("/reportingStructure/{id}")
-    public int numberOfReports(@PathVariable String id) {
+    public int numberOfReports(@PathVariable String id) throws NoSuchEmployeeException {
         LOG.debug("Received numberOfReports request for id [{}]", id);
 
         return reportingStructureService.numberOfReports(id);

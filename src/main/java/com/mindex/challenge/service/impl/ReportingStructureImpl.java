@@ -1,5 +1,6 @@
 package com.mindex.challenge.service.impl;
 
+import com.mindex.challenge.Exceptions.NoSuchEmployeeException;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.service.EmployeeService;
 import com.mindex.challenge.service.ReportingStructureService;
@@ -19,13 +20,17 @@ public class ReportingStructureImpl implements ReportingStructureService {
     private EmployeeService employeeService = new EmployeeServiceImpl();
 
     @Override
-    public int numberOfReports(String id) {
+    public int numberOfReports(String id) throws NoSuchEmployeeException {
         LOG.debug("Counting number of reports with id [{}]", id);
         int count = 0;
         // Counting all the direct reports through BFS
         Queue<Employee> queue = new LinkedList<>();
         Set<Employee> added = new HashSet<>();
-        queue.add(employeeService.read(id));
+        Employee employee = employeeService.read(id);
+        if (employee == null) {
+            throw new NoSuchEmployeeException(String.format("Employee with ID %s is not present", id));
+        }
+        queue.add(employee);
         while (!queue.isEmpty()) {
             Employee emp = queue.poll();
             added.add(emp);
