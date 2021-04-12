@@ -1,6 +1,5 @@
 package com.mindex.challenge.service.impl;
 
-import com.mindex.challenge.Exceptions.NoSuchEmployeeException;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.service.EmployeeService;
 import com.mindex.challenge.service.ReportingStructureService;
@@ -17,18 +16,20 @@ public class ReportingStructureImpl implements ReportingStructureService {
     private static final Logger LOG = LoggerFactory.getLogger(ReportingStructureImpl.class);
 
     @Autowired
-    private EmployeeService employeeService = new EmployeeServiceImpl();
+    private EmployeeService employeeService;
 
     @Override
-    public int numberOfReports(String id) throws NoSuchEmployeeException {
+    public int numberOfReports(String id) {
         LOG.debug("Counting number of reports with id [{}]", id);
         int count = 0;
         // Counting all the direct reports through BFS
         Queue<Employee> queue = new LinkedList<>();
         Set<Employee> added = new HashSet<>();
-        Employee employee = employeeService.read(id);
-        if (employee == null) {
-            throw new NoSuchEmployeeException(String.format("Employee with ID %s is not present", id));
+        Employee employee = null;
+        try {
+            employee = employeeService.read(id);
+        } catch (RuntimeException e) {
+            return -1;
         }
         queue.add(employee);
         while (!queue.isEmpty()) {
@@ -40,7 +41,7 @@ public class ReportingStructureImpl implements ReportingStructureService {
                 count += directReports.size();
 
                 for (Employee directEmp : directReports) {
-                    // Skipping to add an employee if his direct roportees are already added
+                    // Skipping to add an employee if his direct reporters are already added
                     if (!added.contains(directEmp)) {
                         queue.add(directEmp);
                     }

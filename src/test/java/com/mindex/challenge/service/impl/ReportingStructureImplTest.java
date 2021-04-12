@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,8 +70,10 @@ public class ReportingStructureImplTest {
     }
 
 
-    @Test(expected = RestClientException.class)
+    @Test
     public void numberOfReportsExceptionTest() {
-        restTemplate.getForEntity(reportingStructureURL, Integer.class, "123").getBody();
+        Integer expected = -1;
+        Integer count = restTemplate.getForEntity(reportingStructureURL, Integer.class, "123").getBody();
+        assertEquals(expected, count);
     }
 }
